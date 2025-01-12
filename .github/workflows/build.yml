@@ -36,14 +36,14 @@ jobs:
 
       - name: Build Binary
         run: |
-          pyinstaller app.py --onefile --name audio_feature_extractor
+          pyinstaller app.py --onefile --hidden-import=click --hidden-import=librosa --name audio_feature_extractor
         shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-audio_feature_extractor
-          path: dist/audio_feature_extractor*
+          path: dist/audio_feature_extractor
 
   release:
     needs: build
@@ -63,12 +63,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.platform }}-audio_feature_extractor
-          path: release_binaries
+          path: dist/audio_feature_extractor
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: release_binaries/*
+          artifacts: dist/*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
