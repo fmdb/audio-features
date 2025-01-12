@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -47,32 +49,37 @@ jobs:
 
   release:
     needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-        include:
-          - os: ubuntu-latest
-            platform: linux
-          - os: macos-latest
-            platform: macos
-          - os: windows-latest
-            platform: windows
+    runs-on: ubuntu-latest
     steps:
-      - name: Download Artifacts
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.platform }}-audio_feature_extractor
-          path: dist/audio_feature_extractor
+          path: dist
 
-      - name: Create GitHub Release
+      - name: Generate Changelog
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-file: './package.json'
+          git-message: 'chore(release): {version}'
+          preset: 'angular'
+          tag-prefix: 'v'
+          output-file: 'CHANGELOG.md'
+          skip-version-file: true
+          skip-commit: true
+
+      - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/*
+          artifacts: "dist/**/*"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: |
-            **Changelog**
-            - Binary release for audio_feature_extractor
+          body: ${{ steps.changelog.outputs.clean_changelog }}
           draft: false
