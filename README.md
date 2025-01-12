@@ -1,6 +1,6 @@
-# AudioFeatureExtractor - MFCC Berechnung
+# AudioFeatureExtractor - MFCC Calculation
 
-Eine Kommandozeilenanwendung zur Berechnung von MFCC-Werten (Mel-Frequency Cepstral Coefficients) aus Audiodateien.
+A command-line application for calculating MFCC values (Mel-Frequency Cepstral Coefficients) from audio files.
 
 ## Installation
 
@@ -8,26 +8,26 @@ Eine Kommandozeilenanwendung zur Berechnung von MFCC-Werten (Mel-Frequency Cepst
 pip install -r requirements.txt
 ```
 
-## Verwendung
+## Usage
 
-### Einzelne Datei verarbeiten:
+### Process a single file:
 ```bash
-python mfcc_extractor.py pfad/zur/audio.mp3
+python mfcc_extractor.py path/to/audio.mp3
 ```
 
-### Verzeichnis verarbeiten:
+### Process a directory:
 ```bash
-python mfcc_extractor.py pfad/zum/verzeichnis
+python mfcc_extractor.py path/to/directory
 ```
 
-### Mit Ausgabe in Datei:
+### Output to file:
 ```bash
-python mfcc_extractor.py pfad/zur/audio.mp3 -o ergebnisse.json
+python mfcc_extractor.py path/to/audio.mp3 -o results.json
 ```
 
-## Ausgabeformat
+## Output Format
 
-Die Ergebnisse werden im JSON-Format ausgegeben:
+The results are output in JSON format:
 ```json
 [
   {
@@ -37,6 +37,6 @@ Die Ergebnisse werden im JSON-Format ausgegeben:
 ]
 ```
 
-## Unterstützte Formate
+## Supported Formats
 - MP3
 - FLAC 
