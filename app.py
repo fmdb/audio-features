@@ -30,7 +30,7 @@ def process_audio_files(input_path):
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
-@click.option('--output', '-o', type=click.Path(), help='Ausgabedatei für JSON-Ergebnisse')
+@click.option('--output', '-o', type=click.Path(), help='Outputfile for JSON-Results')
 def main(input_path, output):
     results = process_audio_files(input_path)
     json_output = json.dumps(results, indent=2, ensure_ascii=False)

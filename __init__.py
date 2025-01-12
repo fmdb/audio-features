@@ -1,1 +1,1 @@
-from .mfcc_extractor import main 
+from .app import main

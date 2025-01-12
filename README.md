@@ -12,17 +12,17 @@ pip install -r requirements.txt
 
 ### Process a single file:
 ```bash
-python mfcc_extractor.py path/to/audio.mp3
+python app.py path/to/audio.mp3
 ```
 
 ### Process a directory:
 ```bash
-python mfcc_extractor.py path/to/directory
+python app.py path/to/directory
 ```
 
 ### Output to file:
 ```bash
-python mfcc_extractor.py path/to/audio.mp3 -o results.json
+python app.py path/to/audio.mp3 -o results.json
 ```
 
 ## Output Format
