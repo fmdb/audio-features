@@ -27,9 +27,9 @@ def process_audio_files(input_path):
         if input_path.suffix.lower() in ['.mp3', '.flac']:
             results.append(calculate_mfcc(str(input_path)))
     else:
-        for file_path in input_path.glob('*'):
-            if file_path.suffix.lower() in ['.mp3', '.flac']:
-                results.append(calculate_mfcc(str(file_path)))
+        audio_files = sorted([f for f in input_path.glob('*') if f.suffix.lower() in ['.mp3', '.flac']])
+        for file_path in audio_files:
+            results.append(calculate_mfcc(str(file_path)))
     
     logging.info(f"Processing completed. {len(results)} files processed.")
     return results
