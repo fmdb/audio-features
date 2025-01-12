@@ -1,6 +1,6 @@
 # AudioFeatureExtractor - MFCC Calculation
 
-A command-line application for calculating MFCC values (Mel-Frequency Cepstral Coefficients) from audio files.
+A command-line application for calculating MFCC values ([Mel-Frequency Cepstral Coefficients](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)) from audio files.
 
 ## Installation
 
@@ -40,3 +40,7 @@ The results are output in JSON format:
 ## Supported Formats
 - MP3
 - FLAC 
+
+## Disclaimer
+
+This project is experimental.
