@@ -12,17 +12,17 @@ pip install -r requirements.txt
 
 ### Process a single file:
 ```bash
-python app.py path/to/audio.mp3
+python audio_mfcc/app.py path/to/audio.mp3
 ```
 
 ### Process a directory:
 ```bash
-python app.py path/to/directory
+python audio_mfcc/app.py path/to/directory
 ```
 
 ### Output to file:
 ```bash
-python app.py path/to/audio.mp3 -o results.json
+python audio_mfcc/app.py path/to/audio.mp3 -o results.json
 ```
 
 ## Output Format
@@ -32,11 +32,22 @@ The results are output in JSON format:
 [
   {
     "filename": "audio.mp3",
-    "mfcc_means": [0.123, -0.456, ...]
+    "title": "Song Title",
+    "artist": "Artist Name",
+    "album": "Album Name",
+    "year": "2024",
+    "genre": "Rock",
+    "isrc": "USRC17607839",
+    "duration": 180,
+    "file_size": 5.67,
+    "bitrate": 320,
+    "sample_rate": 44100,
+    "channels": "Stereo",
+    "lossless": false,
+    "mfcc": [0.123, -0.456, ...]
   }
 ]
 ```
-
 ## Supported Formats
 - MP3
 - FLAC 

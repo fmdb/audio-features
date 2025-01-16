@@ -1,4 +1,5 @@
-click>=8.1.7
-librosa>=0.10.1
-soundfile>=0.12.1
-numpy>=1.24.0 
+typer==0.9.0
+librosa==0.10.2.post1
+soundfile==0.13.0
+numpy>=1.24.0
+mutagen==1.47.0 
