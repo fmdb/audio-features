@@ -122,22 +122,13 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
     if not input_path.exists():
         raise typer.BadParameter(f"Input path {input_path} does not exist")
 
-    def process_and_save(file_path: Path) -> Dict:
+    def process_file(file_path: Path) -> Dict:
         try:
             result = calculate_mfcc(str(file_path))
-            if output:
-                # Thread-sicheres Schreiben der Ergebnisse
-                with threading.Lock():
-                    with open(output, 'a') as f:
-                        if not os.path.getsize(output):
-                            f.write('[\n')
-                        else:
-                            f.seek(0, 2)  # Zum Ende der Datei springen
-                            if f.tell() > 2:  # Wenn nicht leer und nicht nur '['
-                                f.seek(f.tell() - 2, 0)  # Zurück vor ']'
-                                f.write(',\n')
-                        json.dump(result, f, indent=2)
-                        f.write('\n]')
+            if result:
+                results.append(result)
+                if not output:
+                    print(json.dumps(result, indent=2))
             return result
         except Exception as e:
             logging.error(f"Error processing {file_path}: {str(e)}")
@@ -149,28 +140,18 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
     else:
         files = sorted([f for f in input_path.glob('*') if f.suffix.lower() in ['.mp3', '.flac']])
 
-    # Output-Datei initialisieren, falls benötigt
-    if output:
-        with open(output, 'w') as f:
-            f.write('')
-
     # Parallele Verarbeitung
     max_workers = os.cpu_count() or 4
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_file = {executor.submit(process_and_save, file_path): file_path for file_path in files}
-        
-        for future in as_completed(future_to_file):
-            file_path = future_to_file[future]
-            try:
-                result = future.result()
-                if result:
-                    results.append(result)
-                    if not output:
-                        print(json.dumps(result, indent=2))
-            except Exception as e:
-                logging.error(f"Error processing {file_path}: {str(e)}")
+        list(executor.map(process_file, files))
 
     logging.info(f"Processing completed. {len(results)} files processed.")
+
+    # Ergebnisse in JSON-Datei schreiben
+    if output:
+        with open(output, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+
     return results
 
 @app.command()
