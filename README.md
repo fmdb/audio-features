@@ -31,23 +31,28 @@ The results are output in JSON format:
 ```json
 [
   {
-    "filename": "audio.mp3",
-    "title": "Song Title",
-    "artist": "Artist Name",
-    "album": "Album Name",
-    "year": "2024",
-    "genre": "Rock",
-    "isrc": "USRC17607839",
-    "duration": 180,
-    "file_size": 5.67,
-    "bitrate": 320,
-    "sample_rate": 44100,
-    "channels": "Stereo",
-    "lossless": false,
-    "mfcc": [0.123, -0.456, ...]
+    "metadata": {
+      "filename": "audio.mp3",
+      "file_size_in_mb": 5.67,
+      "lossless": false,
+      "title": "Song Title",
+      "artist": "Artist Name",
+      "album": "Album Name",
+      "year": "2024",
+      "genre": "Rock",
+      "isrc": "USRC17607839",
+      "duration_in_ms": 180000,
+      "bitrate": 320,
+      "sample_rate": 44100,
+      "channels": "Stereo"
+    },
+    "features": {
+      "mfcc": [0.123, -0.456, ...]
+    }
   }
 ]
 ```
+
 ## Supported Formats
 - MP3
 - FLAC 
