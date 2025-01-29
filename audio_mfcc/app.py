@@ -3,35 +3,40 @@ import librosa
 import numpy as np
 import logging
 import json
+import hashlib
 from pathlib import Path
 from typing import Dict, List, Union, Optional
 import typer
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from concurrent_log_handler import ConcurrentRotatingFileHandler
 import threading
 
-# Thread-sicheres Logging Setup
-log_file = "audio_processing.log"
-rotating_handler = ConcurrentRotatingFileHandler(log_file, "a", 512*1024, 5)
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s',
-    handlers=[rotating_handler, logging.StreamHandler()]
+    format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s'
 )
 
 app = typer.Typer()
 thread_local = threading.local()
 
-def extract_metadata(audio_path: str) -> Dict:
+def calculate_sha256(file_path: str) -> str:
+    sha256_hash = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+def extract_metadata(audio_path: str, file_number: int) -> Dict:
     file_path = Path(audio_path)
     file_size = file_path.stat().st_size / (1024 * 1024)
     
     metadata = {
         "filename": file_path.name,
+        "file_number": file_number,
         "file_size_in_mb": round(file_size, 2),
-        "lossless": file_path.suffix.lower() == '.flac'
+        "lossless": file_path.suffix.lower() == '.flac',
+        "sha256": calculate_sha256(audio_path)
     }
     
     if file_path.suffix.lower() == '.mp3':
@@ -65,7 +70,7 @@ def extract_metadata(audio_path: str) -> Dict:
     
     return { "metadata": metadata }
 
-def calculate_mfcc(audio_path: str) -> Dict:
+def calculate_mfcc(audio_path: str, file_number: int) -> Dict:
     """Calculate MFCCs using parameters aligned with Essentia implementation.
     
     Parameters:
@@ -105,7 +110,7 @@ def calculate_mfcc(audio_path: str) -> Dict:
         n_mfcc=13
     )
     
-    result = extract_metadata(audio_path)
+    result = extract_metadata(audio_path, file_number)
     result.update({
         "features": {
             "mfcc": mfcc.mean(axis=1).tolist()
@@ -122,9 +127,10 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
     if not input_path.exists():
         raise typer.BadParameter(f"Input path {input_path} does not exist")
 
-    def process_file(file_path: Path) -> Dict:
+    def process_file(args: tuple) -> Dict:
+        file_path, file_number = args
         try:
-            result = calculate_mfcc(str(file_path))
+            result = calculate_mfcc(str(file_path), file_number)
             if result:
                 results.append(result)
                 if not output:
@@ -134,20 +140,17 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
             logging.error(f"Error processing {file_path}: {str(e)}")
             return None
 
-    # Dateiliste erstellen
     if input_path.is_file():
-        files = [input_path]
+        files = [(input_path, 1)]
     else:
-        files = sorted([f for f in input_path.glob('*') if f.suffix.lower() in ['.mp3', '.flac']])
+        files = [(f, i+1) for i, f in enumerate(sorted([f for f in input_path.glob('*') if f.suffix.lower() in ['.mp3', '.flac']]))]
 
-    # Parallele Verarbeitung
     max_workers = os.cpu_count() or 4
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         list(executor.map(process_file, files))
 
     logging.info(f"Processing completed. {len(results)} files processed.")
 
-    # Ergebnisse in JSON-Datei schreiben
     if output:
         with open(output, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
