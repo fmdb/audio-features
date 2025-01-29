@@ -27,14 +27,18 @@ python audio_mfcc/app.py path/to/audio.mp3 -o results.json
 
 ## Output Format
 
-The results are output in JSON format:
+The results are output in JSON format. A complete JSON schema is available in `audio_mfcc/schema.json`.
+
+Example output:
 ```json
 [
   {
     "metadata": {
       "filename": "audio.mp3",
+      "file_number": 1,
       "file_size_in_mb": 5.67,
       "lossless": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "title": "Song Title",
       "artist": "Artist Name",
       "album": "Album Name",

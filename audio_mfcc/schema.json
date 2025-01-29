@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Audio MFCC Analysis Results",
+  "description": "Schema for the output of the Audio MFCC Analysis tool",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["metadata", "features"],
+    "properties": {
+      "metadata": {
+        "type": "object",
+        "required": [
+          "filename",
+          "file_number",
+          "file_size_in_mb",
+          "lossless",
+          "sha256"
+        ],
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Name of the audio file"
+          },
+          "file_number": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Sequential number of the file in the processing queue"
+          },
+          "file_size_in_mb": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Size of the file in megabytes"
+          },
+          "lossless": {
+            "type": "boolean",
+            "description": "Whether the audio file uses lossless compression (true for FLAC, false for MP3)"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "description": "SHA-256 hash of the file content"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the track"
+          },
+          "artist": {
+            "type": "string",
+            "description": "Name of the artist"
+          },
+          "album": {
+            "type": "string",
+            "description": "Name of the album"
+          },
+          "year": {
+            "type": "string",
+            "description": "Release year of the track"
+          },
+          "genre": {
+            "type": "string",
+            "description": "Genre of the track"
+          },
+          "isrc": {
+            "type": "string",
+            "description": "International Standard Recording Code"
+          },
+          "duration_in_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Duration of the track in milliseconds"
+          },
+          "bitrate": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Bitrate in kbps"
+          },
+          "sample_rate": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sample rate in Hz"
+          },
+          "channels": {
+            "type": "string",
+            "enum": ["Mono", "Stereo"],
+            "description": "Audio channel configuration"
+          }
+        }
+      },
+      "features": {
+        "type": "object",
+        "required": ["mfcc"],
+        "properties": {
+          "mfcc": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 13,
+            "maxItems": 13,
+            "description": "Mean MFCC values (13 coefficients)"
+          }
+        }
+      }
+    }
+  }
+} 
