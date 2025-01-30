@@ -25,6 +25,11 @@ python audio_mfcc/app.py path/to/directory
 python audio_mfcc/app.py path/to/audio.mp3 -o results.json
 ```
 
+### Enable verbose logging:
+```bash
+python audio_mfcc/app.py path/to/audio.mp3 --verbose
+```
+
 ## Output Format
 
 The results are output in JSON format. A complete JSON schema is available in `audio_mfcc/schema.json`.

@@ -12,10 +12,10 @@ from mutagen.flac import FLAC
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s'
-)
+# Logging-Setup
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.WARNING)
 
 app = typer.Typer()
 thread_local = threading.local()
@@ -85,10 +85,10 @@ def calculate_mfcc(audio_path: str, file_number: int) -> Dict:
     - Max frequency: Nyquist frequency (sr/2)
     - Power: Energy (2.0)
     """
-    logging.info(f"Processing file: {audio_path}")
+    logger.info(f"Processing file: {audio_path}")
     
     y, sr = librosa.load(audio_path, sr=None)
-    logging.info(f"Sample rate: {sr} Hz")
+    logger.info(f"Sample rate: {sr} Hz")
     
     mel_spec = librosa.feature.melspectrogram(
         y=y,
@@ -121,7 +121,7 @@ def calculate_mfcc(audio_path: str, file_number: int) -> Dict:
 
 def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = None) -> List[Dict]:
     input_path = Path(input_path)
-    logging.info(f"Start processing: {input_path}")
+    logger.info(f"Start processing: {input_path}")
     results = []
     
     if not input_path.exists():
@@ -137,7 +137,7 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
                     print(json.dumps(result, indent=2))
             return result
         except Exception as e:
-            logging.error(f"Error processing {file_path}: {str(e)}")
+            logger.error(f"Error processing {file_path}: {str(e)}")
             return None
 
     if input_path.is_file():
@@ -149,7 +149,7 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         list(executor.map(process_file, files))
 
-    logging.info(f"Processing completed. {len(results)} files processed.")
+    logger.info(f"Processing completed. {len(results)} files processed.")
 
     if output:
         with open(output, 'w', encoding='utf-8') as f:
@@ -160,8 +160,15 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
 @app.command()
 def main(
     input_path: Path = typer.Argument(..., exists=True, help="Input audio file or directory"),
-    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file for JSON-Results")
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file for JSON-Results"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose logging")
 ):
+    if verbose:
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
+        for handler in logger.handlers:
+            handler.setFormatter(formatter)
+    
     process_audio_files(input_path, output)
 
 if __name__ == "__main__":
