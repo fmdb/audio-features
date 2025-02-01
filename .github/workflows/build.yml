@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Binary
         run: |
-          pyinstaller audio_mfcc.spec --log-level=DEBUG
+          pyinstaller audio_mfcc.spec
         shell: bash
 
       - name: Upload Artifact
