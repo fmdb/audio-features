@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE }}
         run: |
           SHORT_HASH=$(git rev-parse --short HEAD)
-          VERSION=$(npx semantic-release --dry-run | grep "The next release version is" | sed 's/.*The next release version is \([0-9.]*\).*/\1/' || echo '0.0.0')
+          VERSION=$(npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/' || echo '0.0.0')
           echo "BUILD_ID=${VERSION}+${SHORT_HASH}" >> $GITHUB_ENV
         shell: bash
 
