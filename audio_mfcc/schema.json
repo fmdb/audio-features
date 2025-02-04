@@ -83,6 +83,10 @@
             "type": "string",
             "enum": ["Mono", "Stereo"],
             "description": "Audio channel configuration"
+          },
+          "build_id": {
+            "type": "string",
+            "description": "Build identifier of the application"
           }
         }
       },

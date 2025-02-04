@@ -12,6 +12,8 @@ from mutagen.flac import FLAC
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
+BUILD_ID = os.getenv('BUILD_ID', 'development')
+
 # Logging-Setup
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -36,7 +38,8 @@ def extract_metadata(audio_path: str, file_number: int) -> Dict:
         "file_number": file_number,
         "file_size_in_mb": round(file_size, 2),
         "lossless": file_path.suffix.lower() == '.flac',
-        "sha256": calculate_sha256(audio_path)
+        "sha256": calculate_sha256(audio_path),
+        "build_id": BUILD_ID
     }
     
     if file_path.suffix.lower() == '.mp3':
