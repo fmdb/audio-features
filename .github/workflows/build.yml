@@ -58,11 +58,20 @@ jobs:
         env:
           BUILD_ID: ${{ env.BUILD_ID }}
 
+      - name: Rename Binary with Build ID
+        run: |
+          if [ "${{ matrix.platform }}" = "windows" ]; then
+            mv dist/fmdb_audio_mfcc.exe "dist/fmdb_audio_mfcc-${{ env.BUILD_ID }}.exe"
+          else
+            mv dist/fmdb_audio_mfcc "dist/fmdb_audio_mfcc-${{ env.BUILD_ID }}"
+          fi
+        shell: bash
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-fmdb_audio_mfcc
-          path: dist/fmdb_audio_mfcc*
+          path: dist/fmdb_audio_mfcc-*
 
   release:
     needs: build
@@ -73,10 +82,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download all artifacts
+      - name: Download Linux Artifact
         uses: actions/download-artifact@v4
         with:
-          path: dist
+          name: linux-fmdb_audio_mfcc
+          path: dist/linux
+
+      - name: Download MacOS Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-fmdb_audio_mfcc
+          path: dist/macos
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-fmdb_audio_mfcc
+          path: dist/windows
+
+      - name: List Artifacts
+        run: |
+          ls -R dist/
+        shell: bash
 
       - uses: "actions/setup-node@v4"
         with:
