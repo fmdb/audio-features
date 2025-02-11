@@ -3,6 +3,11 @@ name: Build application
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 env:
   VERSION: ${{ github.ref_name }}
 
@@ -42,14 +47,14 @@ jobs:
         run: |
           SHORT_HASH=$(git rev-parse --short HEAD)
           VERSION=$(npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/' || echo '0.0.0')
-          echo "BUILD_ID=${VERSION}+${SHORT_HASH}" >> $GITHUB_ENV
+          echo "BUILD_ID=${VERSION}+${SHORT_HASH}" >> "$GITHUB_ENV"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
+          pip install -r requirements.txt pyinstaller
 
       - name: Build Binary
         run: |
@@ -112,4 +117,6 @@ jobs:
       - name: "Run semantic-release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          npm install --save-dev semantic-release
+          npx semantic-release
