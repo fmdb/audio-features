@@ -27,14 +27,7 @@ jobs:
         id: build_id
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE }}
-        run: |
-          VERSION=$(npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/' || echo '0.0.0')
-          npx semantic-release --dry-run | grep -i "Skip .* tag creation"
-          npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/'
-          echo $VERSION
-          echo "BUILD_ID=${VERSION}" >> "$GITHUB_ENV"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-        shell: bash
+        run: npx semantic-release --dry-run
 
   build:
     needs: version
@@ -71,7 +64,7 @@ jobs:
           pyinstaller audio_mfcc.spec
         shell: bash
         env:
-          BUILD_ID: ${{ env.BUILD_ID }}
+          BUILD_ID: ${{ steps.build_id.outputs.new-release-version }}
 
       - name: Rename Binary with Build ID
         run: |
