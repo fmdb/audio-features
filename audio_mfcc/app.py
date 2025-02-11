@@ -154,6 +154,9 @@ def process_audio_files(input_path: Union[str, Path], output: Optional[Path] = N
 
     logger.info(f"Processing completed. {len(results)} files processed.")
 
+    # Sort results by file_number
+    results.sort(key=lambda x: x['metadata']['file_number'])
+
     if output:
         with open(output, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
