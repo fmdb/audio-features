@@ -24,5 +24,6 @@
       }
     ]
   ],
-  "tagFormat": "${version}"
+  "tagFormat": "${version}",
+  "debug": true
 }
