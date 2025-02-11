@@ -12,7 +12,32 @@ env:
   VERSION: ${{ github.ref_name }}
 
 jobs:
+  version:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: "actions/setup-node@v4"
+        with:
+          node-version: 'lts/*'
+
+      - name: Generate Build ID
+        id: build_id
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE }}
+        run: |
+          VERSION=$(npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/' || echo '0.0.0')
+          npx semantic-release --dry-run | grep -i "Skip .* tag creation"
+          npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/'
+          echo $VERSION
+          echo "BUILD_ID=${VERSION}" >> "$GITHUB_ENV"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
   build:
+    needs: version
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -35,21 +60,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-
-      - uses: "actions/setup-node@v4"
-        with:
-          node-version: 'lts/*'
-
-      - name: Generate Build ID
-        id: build_id
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE }}
-        run: |
-          SHORT_HASH=$(git rev-parse --short HEAD)
-          VERSION=$(npx semantic-release --dry-run | grep -i "Skip .* tag creation" | sed -E 's/.*Skip (.*) tag creation.*/\1/' || echo '0.0.0')
-          echo "BUILD_ID=${VERSION}+${SHORT_HASH}" >> "$GITHUB_ENV"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-        shell: bash
 
       - name: Install Dependencies
         run: |
