@@ -1,4 +1,4 @@
-typer==0.15.1
+typer==0.15.2
 librosa==0.10.2.post1
 soundfile==0.13.1
 numpy>=1.24.0
