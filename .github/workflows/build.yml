@@ -96,12 +96,12 @@ jobs:
         env:
           BUILD_ID: ${{ needs.version.outputs.new_release_version }}
 
-      - name: Rename Binary with Build ID
+      - name: Rename Binary with Build ID and Platform
         run: |
           if [ "${{ matrix.platform }}" = "windows" ]; then
-            mv dist/fmdb_audio_features.exe "dist/fmdb_audio_features-${{ needs.version.outputs.new_release_version }}.exe"
+            mv dist/fmdb_audio_features.exe "dist/fmdb_audio_features-${{ needs.version.outputs.new_release_version }}-${{ matrix.platform }}.exe"
           else
-            mv dist/fmdb_audio_features "dist/fmdb_audio_features-${{ needs.version.outputs.new_release_version }}"
+            mv dist/fmdb_audio_features "dist/fmdb_audio_features-${{ needs.version.outputs.new_release_version }}-${{ matrix.platform }}"
           fi
         shell: bash
 
