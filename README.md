@@ -14,6 +14,11 @@ A tool for extracting audio features from MP3 and FLAC files.
 - Progress display
 - Detailed metadata extraction
 
+## Requirements
+
+- Python 3.12, 3.13, or 3.14
+- Dependencies listed in requirements.txt
+
 ## Installation
 
 ```bash
