@@ -8,28 +8,7 @@ permissions:
   issues: write
   pull-requests: write
 
-env:
-  VERSION: ${{ github.ref_name }}
-
 jobs:
-  version:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: "actions/setup-node@v4"
-        with:
-          node-version: 'lts/*'
-      - run: |
-          npm install --save-dev semantic-release semantic-release-export-data
-      - name: Generate Build ID
-        id: build_id
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE }}
-        run: npx semantic-release --dry-run
-
   build:
     needs: version
     runs-on: ${{ matrix.os }}
@@ -75,23 +54,12 @@ jobs:
             pyinstaller --name=fmdb_audio_features --onefile audio_features/app.py
           fi
         shell: bash
-        env:
-          BUILD_ID: ${{ steps.build_id.outputs.new-release-version }}
-
-      - name: Rename Binary with Build ID
-        run: |
-          if [ "${{ matrix.platform }}" = "windows" ]; then
-            mv dist/fmdb_audio_features.exe "dist/fmdb_audio_features-${{ env.BUILD_ID }}.exe"
-          else
-            mv dist/fmdb_audio_features "dist/fmdb_audio_features-${{ env.BUILD_ID }}"
-          fi
-        shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-fmdb_audio_features
-          path: dist/fmdb_audio_features-*
+          path: dist/fmdb_audio_features*
 
   release:
     needs: build

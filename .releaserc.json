@@ -1,7 +1,6 @@
 {
   "branches": ["main"],
   "plugins": [
-    "semantic-release-export-data",
     [
       "@semantic-release/commit-analyzer",
       {
@@ -18,9 +17,9 @@
       "@semantic-release/github",
       {
         "assets": [
-            { "path": "dist/macos/fmdb_audio_mfcc-*", "label": "macOS executable" },
-            { "path": "dist/linux/fmdb_audio_mfcc-*", "label": "Linux executable" },
-            { "path": "dist/windows/fmdb_audio_mfcc-*.exe", "label": "Windows executable" }
+            { "path": "dist/macos/fmdb_audio_features*", "label": "macOS executable" },
+            { "path": "dist/linux/fmdb_audio_features*", "label": "Linux executable" },
+            { "path": "dist/windows/fmdb_audio_features*.exe", "label": "Windows executable" }
             ]
       }
     ]
