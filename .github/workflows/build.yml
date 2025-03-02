@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   build:
-    needs: version
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
