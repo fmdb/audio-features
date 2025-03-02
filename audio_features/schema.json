@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Audio MFCC Analysis Results",
-  "description": "Schema for the output of the Audio MFCC Analysis tool",
   "type": "array",
   "items": {
     "type": "object",
@@ -9,13 +7,7 @@
     "properties": {
       "metadata": {
         "type": "object",
-        "required": [
-          "filename",
-          "file_number",
-          "file_size_in_mb",
-          "lossless",
-          "sha256"
-        ],
+        "required": ["filename", "file_number", "file_size_in_mb", "lossless", "sha256", "build_id"],
         "properties": {
           "filename": {
             "type": "string",
@@ -23,22 +15,23 @@
           },
           "file_number": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Sequential number of the file in the processing queue"
+            "description": "Number of the file in the processed sequence"
           },
           "file_size_in_mb": {
             "type": "number",
-            "minimum": 0,
             "description": "Size of the file in megabytes"
           },
           "lossless": {
             "type": "boolean",
-            "description": "Whether the audio file uses lossless compression (true for FLAC, false for MP3)"
+            "description": "Whether the audio file is in a lossless format"
           },
           "sha256": {
             "type": "string",
-            "pattern": "^[a-fA-F0-9]{64}$",
-            "description": "SHA-256 hash of the file content"
+            "description": "SHA256 hash of the file"
+          },
+          "build_id": {
+            "type": "string",
+            "description": "Build ID for tracking changes in processing"
           },
           "title": {
             "type": "string",
@@ -46,15 +39,15 @@
           },
           "artist": {
             "type": "string",
-            "description": "Name of the artist"
+            "description": "Artist name"
           },
           "album": {
             "type": "string",
-            "description": "Name of the album"
+            "description": "Album name"
           },
           "year": {
             "type": "string",
-            "description": "Release year of the track"
+            "description": "Release year"
           },
           "genre": {
             "type": "string",
@@ -66,27 +59,19 @@
           },
           "duration_in_ms": {
             "type": "integer",
-            "minimum": 0,
             "description": "Duration of the track in milliseconds"
           },
           "bitrate": {
             "type": "integer",
-            "minimum": 0,
             "description": "Bitrate in kbps"
           },
           "sample_rate": {
             "type": "integer",
-            "minimum": 0,
             "description": "Sample rate in Hz"
           },
           "channels": {
             "type": "string",
-            "enum": ["Mono", "Stereo"],
-            "description": "Audio channel configuration"
-          },
-          "build_id": {
-            "type": "string",
-            "description": "Build identifier of the application"
+            "description": "Stereo or Mono"
           }
         }
       },
@@ -99,11 +84,31 @@
             "items": {
               "type": "number"
             },
-            "minItems": 13,
-            "maxItems": 13,
-            "description": "Mean MFCC values (13 coefficients)"
+            "description": "Mel-frequency cepstral coefficients (mean values)"
+          },
+          "spectral_contrast": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Spectral contrast coefficients (mean values)"
+          },
+          "chroma": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Chroma features (mean values)"
+          },
+          "tempo": {
+            "type": "number",
+            "description": "Estimated tempo in BPM"
           }
         }
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if processing failed"
       }
     }
   }

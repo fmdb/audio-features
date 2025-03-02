@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fmdb-audio-features"
+version = "0.2.0"
+description = "A tool for extracting audio features from MP3 and FLAC files"
+readme = "README.md"
+authors = [
+    {name = "Marcus Stöhr", email = "marcus@fmdb.net"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "librosa>=0.9.2",
+    "numpy>=1.20.0",
+    "typer>=0.7.0",
+    "mutagen>=1.46.0",
+    "tqdm>=4.64.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "flake8", "black"]
+
+[project.scripts]
+fmdb-audio-features = "audio_features.app:app"
+
+[tool.setuptools]
+packages = ["audio_features"] 
