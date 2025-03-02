@@ -53,16 +53,27 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
 
+      - name: Create PyInstaller Spec if needed
+        run: |
+          if [ ! -f audio_features.spec ]; then
+            python -m PyInstaller --name=fmdb_audio_features --onefile audio_features/app.py
+          fi
+        shell: bash
+
       - name: Build Binary
         run: |
-          pyinstaller audio_mfcc.spec
+          if [ -f audio_features.spec ]; then
+            pyinstaller audio_features.spec
+          else
+            pyinstaller --name=fmdb_audio_features --onefile audio_features/app.py
+          fi
         shell: bash
         env:
           BUILD_ID: ${{ steps.build_id.outputs.new-release-version }}
@@ -70,17 +81,17 @@ jobs:
       - name: Rename Binary with Build ID
         run: |
           if [ "${{ matrix.platform }}" = "windows" ]; then
-            mv dist/fmdb_audio_mfcc.exe "dist/fmdb_audio_mfcc-${{ env.BUILD_ID }}.exe"
+            mv dist/fmdb_audio_features.exe "dist/fmdb_audio_features-${{ env.BUILD_ID }}.exe"
           else
-            mv dist/fmdb_audio_mfcc "dist/fmdb_audio_mfcc-${{ env.BUILD_ID }}"
+            mv dist/fmdb_audio_features "dist/fmdb_audio_features-${{ env.BUILD_ID }}"
           fi
         shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-fmdb_audio_mfcc
-          path: dist/fmdb_audio_mfcc-*
+          name: ${{ matrix.platform }}-fmdb_audio_features
+          path: dist/fmdb_audio_features-*
 
   release:
     needs: build
@@ -94,19 +105,19 @@ jobs:
       - name: Download Linux Artifact
         uses: actions/download-artifact@v4
         with:
-          name: linux-fmdb_audio_mfcc
+          name: linux-fmdb_audio_features
           path: dist/linux
 
       - name: Download MacOS Artifact
         uses: actions/download-artifact@v4
         with:
-          name: macos-fmdb_audio_mfcc
+          name: macos-fmdb_audio_features
           path: dist/macos
 
       - name: Download Windows Artifact
         uses: actions/download-artifact@v4
         with:
-          name: windows-fmdb_audio_mfcc
+          name: windows-fmdb_audio_features
           path: dist/windows
 
       - name: List Artifacts
