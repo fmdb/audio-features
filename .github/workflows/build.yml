@@ -121,19 +121,19 @@ jobs:
           fetch-depth: 0
 
       - name: Download Linux Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: linux-fmdb_audio_features
           path: dist/linux
 
       - name: Download MacOS Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: macos-fmdb_audio_features
           path: dist/macos
 
       - name: Download Windows Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: windows-fmdb_audio_features
           path: dist/windows
