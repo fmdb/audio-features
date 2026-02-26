@@ -106,7 +106,7 @@ jobs:
         shell: bash
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.platform }}-fmdb_audio_features
           path: dist/fmdb_audio_features-*
@@ -121,19 +121,19 @@ jobs:
           fetch-depth: 0
 
       - name: Download Linux Artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: linux-fmdb_audio_features
           path: dist/linux
 
       - name: Download MacOS Artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: macos-fmdb_audio_features
           path: dist/macos
 
       - name: Download Windows Artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: windows-fmdb_audio_features
           path: dist/windows
