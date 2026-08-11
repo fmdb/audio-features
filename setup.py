@@ -5,7 +5,7 @@ setup(
     version="1.0.0",
     packages=find_packages(),
     install_requires=[
-        "librosa==0.11.0",
+        "librosa==1.0.0",
         "numpy>=1.20.0",
         "soundfile>=0.12.1",
         "pydub>=0.25.1"
